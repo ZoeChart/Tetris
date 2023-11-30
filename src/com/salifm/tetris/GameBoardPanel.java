@@ -229,9 +229,15 @@ public class GameBoardPanel extends JPanel implements ActionListener {
 
     @Override
     public void paint(Graphics g) {
-
         super.paint(g);
 
+        drawGameInfo(g);
+        drawShadow(g);
+        drawGameBoard(g);
+        drawCurrentTetromino(g);
+    }
+
+    private void drawGameInfo(Graphics g) {
         if (!isPaused) {
             currentStatus = "Score: " + currentScore;
             currentLevel = "Level: " + (currentScore / 10 + 1);
@@ -244,11 +250,12 @@ public class GameBoardPanel extends JPanel implements ActionListener {
         g.setFont(new Font("Consolas", Font.PLAIN, 28));
         g.drawString(currentStatus, 15, 35);
         g.drawString(currentLevel, 15, 70);
+    }
 
+    private void drawShadow(Graphics g) {
         Dimension size = getSize();
         int boardTop = (int) size.getHeight() - BoardHeight * blockHeight();
 
-        // rendering - shadow of tetromino
         int tempY = curY;
         while (tempY > 0) {
             if (!atomIsMovable(curBlock, curX, tempY - 1, false))
@@ -258,11 +265,15 @@ public class GameBoardPanel extends JPanel implements ActionListener {
         for (int i = 0; i < 4; i++) {
             int x = curX + curBlock.getX(i);
             int y = tempY - curBlock.getY(i);
-            drawTetromino(g, 0 + x * blockWidth(), boardTop + (BoardHeight - y - 1) * blockHeight(), curBlock.getShape(),
-                    true);
+            drawTetromino(g, 0 + x * blockWidth(), boardTop + (BoardHeight - y - 1) * blockHeight(),
+                    curBlock.getShape(), true);
         }
+    }
 
-        // rendering - game board
+    private void drawGameBoard(Graphics g) {
+        Dimension size = getSize();
+        int boardTop = (int) size.getHeight() - BoardHeight * blockHeight();
+
         for (int i = 0; i < BoardHeight; i++) {
             for (int j = 0; j < BoardWidth; j++) {
                 Tetrominoes shape = curTetrominoPos(j, BoardHeight - i - 1);
@@ -270,9 +281,12 @@ public class GameBoardPanel extends JPanel implements ActionListener {
                     drawTetromino(g, 0 + j * blockWidth(), boardTop + i * blockHeight(), shape, false);
             }
         }
+    }
 
+    private void drawCurrentTetromino(Graphics g) {
+        Dimension size = getSize();
+        int boardTop = (int) size.getHeight() - BoardHeight * blockHeight();
 
-        // rendering - current tetromino
         if (curBlock.getShape() != Tetrominoes.NO_BLOCK) {
             for (int i = 0; i < 4; i++) {
                 int x = curX + curBlock.getX(i);
@@ -281,7 +295,6 @@ public class GameBoardPanel extends JPanel implements ActionListener {
                         curBlock.getShape(), false);
             }
         }
-
     }
 
     private void drawTetromino(Graphics g, int x, int y, Tetrominoes bs, boolean isShadow) {
