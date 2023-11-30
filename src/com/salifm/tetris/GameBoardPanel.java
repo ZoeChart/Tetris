@@ -356,16 +356,12 @@ public class GameBoardPanel extends JPanel implements ActionListener {
         return true;
     }
 
-    private boolean isMovable(Tetromino chkBlock, int chkX, int chkY) {
-        return atomIsMovable(chkBlock, chkX, chkY, true);
-    }
-
     private void newTetromino() {
         curBlock.setRandomShape();
         curX = BoardWidth / 2 + 1;
         curY = BoardHeight - 1 + curBlock.minY();
 
-        if (!isMovable(curBlock, curX, curY)) {
+        if (!atomIsMovable(curBlock, curX, curY, true)) {
             curBlock.setShape(Tetrominoes.NO_BLOCK);
             timer.stop();
             isStarted = false;
@@ -388,7 +384,7 @@ public class GameBoardPanel extends JPanel implements ActionListener {
     }
 
     private void advanceOneLine() {
-        if (!isMovable(curBlock, curX, curY - 1)) {
+        if (!atomIsMovable(curBlock, curX, curY - 1, true)) {
             tetrominoFixed();
         }
     }
@@ -396,7 +392,7 @@ public class GameBoardPanel extends JPanel implements ActionListener {
     private void advanceToEnd() {
         int tempY = curY;
         while (tempY > 0) {
-            if (!isMovable(curBlock, curX, tempY - 1))
+            if (!atomIsMovable(curBlock, curX, tempY - 1, true))
                 break;
             --tempY;
         }
