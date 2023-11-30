@@ -50,78 +50,105 @@ public class GameBoardPanel extends JPanel implements ActionListener {
 
 
     public GameBoardPanel(GameWindow tetrisFrame, int timerResolution) {
-
+        initializeAttributes(tetrisFrame, timerResolution);
         setFocusable(true);
         setBackground(new Color(0, 30, 30));
+        addKeyListener(createKeyListener());
+        tetrisFrameD = tetrisFrame;
+        initBoard();
+    }
+
+    private void initializeAttributes(GameWindow tetrisFrame, int timerResolution) {
         curBlock = new Tetromino();
         timer = new Timer(timerResolution, this);
-        timer.start();    // activate timer
+        timer.start();
         currentTimerResolution = timerResolution;
-
         gameBoard = new Tetrominoes[BoardWidth * BoardHeight];
+        colorTable = initializeColorTable();
+    }
 
-        // colour of tetrominoes
-        colorTable = new Color[]{
+    private Color[] initializeColorTable() {
+        return new Color[]{
                 new Color(0, 0, 0), new Color(164, 135, 255),
                 new Color(255, 128, 0), new Color(255, 0, 0),
                 new Color(32, 128, 255), new Color(255, 0, 255),
                 new Color(255, 255, 0), new Color(0, 255, 0)
         };
+    }
 
-        // keyboard listener
-        addKeyListener(new KeyAdapter() {
+    private KeyAdapter createKeyListener() {
+        return new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (!isStarted || curBlock.getShape() == Tetrominoes.NO_BLOCK) {
-                    return;
-                }
-
-                int keycode = e.getKeyCode();
-
-                if (keycode == 'p' || keycode == 'P') {
-                    pause();
-                    return;
-                }
-
-                if (isPaused) {
-                    return;
-                }
-
-                switch (keycode) {
-                    case 'a':
-                    case 'A':
-                    case KeyEvent.VK_LEFT:
-                        isMovable(curBlock, curX - 1, curY);
-                        break;
-                    case 'd':
-                    case 'D':
-                    case KeyEvent.VK_RIGHT:
-                        isMovable(curBlock, curX + 1, curY);
-                        break;
-                    case 'w':
-                    case 'W':
-                    case KeyEvent.VK_UP:
-                        isMovable(curBlock.rotateRight(), curX, curY);
-                        break;
-                    case 's':
-                    case 'S':
-                    case KeyEvent.VK_DOWN:
-                        advanceOneLine();
-                        break;
-                    case KeyEvent.VK_SPACE:
-                        advanceToEnd();
-                        break;
-                    case 'p':
-                    case 'P':
-                        pause();
-                        break;
-                }
-
+                handleKeyPressed(e);
             }
-        });
+        };
+    }
 
-        tetrisFrameD = tetrisFrame;
-        initBoard();
+    private void handleKeyPressed(KeyEvent e) {
+        if (!isStarted || curBlock.getShape() == Tetrominoes.NO_BLOCK) {
+            return;
+        }
+
+        int keycode = e.getKeyCode();
+
+        if (keycode == 'p' || keycode == 'P') {
+            pause();
+            return;
+        }
+
+        if (isPaused) {
+            return;
+        }
+
+        handleKeyActions(e);
+    }
+
+    private void handleKeyActions(KeyEvent e) {
+        if (!isStarted || curBlock.getShape() == Tetrominoes.NO_BLOCK) {
+            return;
+        }
+
+        int keycode = e.getKeyCode();
+
+        if (keycode == 'p' || keycode == 'P') {
+            pause();
+            return;
+        }
+
+        if (isPaused) {
+            return;
+        }
+
+        switch (keycode) {
+            case 'a':
+            case 'A':
+            case KeyEvent.VK_LEFT:
+                atomIsMovable(curBlock, curX - 1, curY, true);
+                break;
+            case 'd':
+            case 'D':
+            case KeyEvent.VK_RIGHT:
+                atomIsMovable(curBlock, curX + 1, curY, true);
+                break;
+            case 'w':
+            case 'W':
+            case KeyEvent.VK_UP:
+                atomIsMovable(curBlock.rotateRight(), curX, curY, true);
+                break;
+            case 's':
+            case 'S':
+            case KeyEvent.VK_DOWN:
+                advanceOneLine();
+                break;
+            case KeyEvent.VK_SPACE:
+                advanceToEnd();
+                break;
+            case 'p':
+            case 'P':
+                pause();
+                break;
+        }
     }
 
     // adjusting game level
