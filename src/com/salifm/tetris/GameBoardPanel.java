@@ -20,6 +20,8 @@ import com.salifm.tetris.Tetromino.Tetrominoes;
 public class GameBoardPanel extends JPanel implements ActionListener {
     private static final int BoardWidth = 10;    // game board x size
     private static final int BoardHeight = 22;    // game board y size
+    private static final int MIN_TIMER_RESOLUTION = 100;
+    private static final int MAX_TIMER_RESOLUTION = 370;
 
     // game status & timer
     private Timer timer;
@@ -124,46 +126,9 @@ public class GameBoardPanel extends JPanel implements ActionListener {
 
     // adjusting game level
     private void setResolution() {
-        // fix me later! it's lame :P"
-
-        switch (currentScore / 10) {
-            case 10:
-                currentTimerResolution = 100;
-                break;
-            case 9:
-                currentTimerResolution = 130;
-                break;
-            case 8:
-                currentTimerResolution = 160;
-                break;
-            case 7:
-                currentTimerResolution = 190;
-                break;
-            case 6:
-                currentTimerResolution = 220;
-                break;
-            case 5:
-                currentTimerResolution = 250;
-                break;
-            case 4:
-                currentTimerResolution = 280;
-                break;
-            case 3:
-                currentTimerResolution = 310;
-                break;
-            case 2:
-                currentTimerResolution = 340;
-                break;
-            case 1:
-                currentTimerResolution = 370;
-                break;
-            case 0:
-                currentTimerResolution = 370;
-                break;
-        }
-
+        int level = currentScore / 10;
+        currentTimerResolution = Math.max(MIN_TIMER_RESOLUTION, MAX_TIMER_RESOLUTION - (level * 30));
         timer.setDelay(currentTimerResolution);
-
     }
 
     // initialize game board
